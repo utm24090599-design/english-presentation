@@ -1,0 +1,252 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title: string;
+  prevPage?: string;
+  nextPage?: string;
+}
+
+const { title, prevPage, nextPage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <ClientRouter />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <nav class="nav-controls">
+      {
+        prevPage ? (
+          <a href={prevPage} class="nav-btn prev" aria-label="Página anterior">
+            <i class="fas fa-chevron-left" />
+            <span>Anterior</span>
+          </a>
+        ) : (
+          <button class="nav-btn disabled" disabled>
+            <i class="fas fa-chevron-left" />
+            <span>Anterior</span>
+          </button>
+        )
+      }
+
+      {
+        nextPage ? (
+          <a href={nextPage} class="nav-btn next" aria-label="Siguiente página">
+            <span>Siguiente</span>
+            <i class="fas fa-chevron-right" />
+          </a>
+        ) : (
+          <button class="nav-btn disabled" disabled>
+            <span>Siguiente</span>
+            <i class="fas fa-chevron-right" />
+          </button>
+        )
+      }
+    </nav>
+
+    <main class="content-wrapper">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 45%, #dbeafe 100%);
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    color: #0f172a;
+    position: relative;
+  }
+
+  .ambient {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ambient-one {
+    width: 20rem;
+    height: 20rem;
+    background: #93c5fd;
+    top: -4rem;
+    right: -4rem;
+    animation: pulse 7s ease-in-out infinite;
+  }
+
+  .ambient-two {
+    width: 16rem;
+    height: 16rem;
+    background: #c4b5fd;
+    bottom: 4rem;
+    left: -3rem;
+    animation: pulse 9s ease-in-out infinite reverse;
+  }
+
+  .nav-controls {
+    position: fixed;
+    bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 1000;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.8rem 1.3rem;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #334155;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .nav-btn:not(.disabled):hover {
+    transform: translateY(-4px);
+    background-color: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
+  }
+
+  .nav-btn:not(.disabled):active {
+    transform: translateY(-1px);
+  }
+
+  .nav-btn.disabled {
+    background-color: rgba(226, 232, 240, 0.55);
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+    border: 1px solid rgba(226, 232, 240, 0.2);
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .slide-card {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 3.5rem 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    width: 100%;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .slide-card h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .slide-card p {
+    font-size: 1.25rem;
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+    font-weight: 400;
+  }
+
+  .slide-card p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .slide-anim h1,
+  .slide-anim p {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .slide-anim h1 {
+    animation-delay: 0.1s;
+  }
+
+  .slide-anim p:nth-of-type(1) {
+    animation-delay: 0.25s;
+  }
+
+  .slide-anim p:nth-of-type(2) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.6;
+    }
+  }
+</style>
